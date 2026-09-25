@@ -47,6 +47,8 @@ PRODUCT_DELAY = 2
 
 HEADLESS = True
 
+RUN_ONCE = os.getenv("RUN_ONCE", "false").lower() == "true"
+
 
 # ============================================================
 # SEARCH SEEDS
@@ -1223,7 +1225,7 @@ async def discovery_agent():
 
         try:
 
-            while True:
+            if RUN_ONCE:
 
                 try:
 
@@ -1241,21 +1243,41 @@ async def discovery_agent():
 
                     STATS["errors"] += 1
 
-                print("\n")
+            else:
 
-                print(
-                    "🔄 Discovery cycle complete."
-                )
+                while True:
 
-                print(
-                    f"⏳ Next cycle in "
-                    f"{DISCOVERY_INTERVAL}"
-                    f" seconds."
-                )
+                    try:
 
-                await asyncio.sleep(
-                    DISCOVERY_INTERVAL
-                )
+                        await discovery_round(
+                            page
+                        )
+
+                    except Exception as error:
+
+                        print(
+                            "\n❌ Discovery error:"
+                        )
+
+                        print(error)
+
+                        STATS["errors"] += 1
+
+                    print("\n")
+
+                    print(
+                        "🔄 Discovery cycle complete."
+                    )
+
+                    print(
+                        f"⏳ Next cycle in "
+                        f"{DISCOVERY_INTERVAL}"
+                        f" seconds."
+                    )
+
+                    await asyncio.sleep(
+                        DISCOVERY_INTERVAL
+                    )
 
         finally:
 

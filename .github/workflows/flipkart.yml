@@ -29,5 +29,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          RUN_ONCE: "true"
         run: |
           python -m agents.discovery_agent
